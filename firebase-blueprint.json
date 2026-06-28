@@ -1,0 +1,112 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "ChronoGuard user profile and pattern preferences",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Firestore user UID" },
+        "email": { "type": "string", "description": "User email address" },
+        "name": { "type": "string", "description": "User profile name" },
+        "googleId": { "type": "string", "description": "Google user unique identifier" },
+        "accessToken": { "type": "string", "description": "Encrypted workspace access token" },
+        "refreshToken": { "type": "string", "description": "Encrypted workspace refresh token" },
+        "productivityPatterns": { "type": "object", "description": "Mapping of active hours to score coefficients" },
+        "communicationStyle": { "type": "string", "enum": ["professional", "casual", "friendly"] },
+        "preferredExtensionDays": { "type": "integer", "description": "Defaults to 2 days" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "email", "name", "googleId"]
+    },
+    "Commitment": {
+      "title": "Commitment",
+      "description": "Monitored commitments, calendar events, or manual tasks and risk vectors",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "start": { "type": "string", "format": "date-time" },
+        "deadline": { "type": "string", "format": "date-time" },
+        "source": { "type": "string", "enum": ["calendar", "gmail", "tasks", "manual"] },
+        "sourceId": { "type": "string" },
+        "riskScore": { "type": "integer" },
+        "riskFactors": { "type": "object" },
+        "status": { "type": "string", "enum": ["pending", "in_progress", "completed", "missed", "rescheduled"] },
+        "estimatedEffortHours": { "type": "number" },
+        "actualEffortHours": { "type": "number" },
+        "subtasks": { "type": "array" },
+        "stakeholders": { "type": "array" },
+        "relatedEmails": { "type": "array" },
+        "relatedDocs": { "type": "array" },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "title", "deadline", "riskScore", "status"]
+    },
+    "FocusBlock": {
+      "title": "FocusBlock",
+      "description": "AI-scheduled time blocks allocated on user's calendar",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "commitmentId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["scheduled", "completed", "cancelled"] },
+        "calendarEventId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "commitmentId", "start", "end", "status"]
+    },
+    "MeetingBrief": {
+      "title": "MeetingBrief",
+      "description": "Pre-meeting context briefing package compiled by ChronoGuard",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "meetingId": { "type": "string" },
+        "title": { "type": "string" },
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" },
+        "participants": { "type": "array" },
+        "agenda": { "type": "string" },
+        "previousContext": { "type": "array" },
+        "actionItems": { "type": "array" },
+        "relevantDocs": { "type": "array" },
+        "suggestedTalkingPoints": { "type": "array" },
+        "delivered": { "type": "boolean" },
+        "deliveredAt": { "type": "string", "format": "date-time" },
+        "deliveredMethod": { "type": "string", "enum": ["in_app", "email"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "meetingId", "title", "start", "end"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User accounts collection"
+    },
+    "/commitments/{commitmentId}": {
+      "schema": { "$ref": "#/entities/Commitment" },
+      "description": "Commitments and risk vectors associated with users"
+    },
+    "/focusBlocks/{blockId}": {
+      "schema": { "$ref": "#/entities/FocusBlock" },
+      "description": "Focus block time allocations scheduled in the system"
+    },
+    "/meetingBriefs/{briefId}": {
+      "schema": { "$ref": "#/entities/MeetingBrief" },
+      "description": "Context preps and checklists generated by the system"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ChronoGuard",
+  "description": "A proactive AI productivity companion that predicts and prevents missed deadlines across Google Workspace.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
